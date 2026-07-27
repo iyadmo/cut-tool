@@ -1,40 +1,32 @@
 import sys
 
-if len(sys.argv)==3:
- with open(sys.argv[2],"r") as f:
+if len(sys.argv) == 2:
+    f = sys.stdin
+elif sys.argv[-1] == "-":
+    f = sys.stdin
+else:
+    f = open(sys.argv[-1], "r")
 
-    if len(sys.argv[1])==3:
-     arg=int(sys.argv[1][2])
-     for line in f:
-        field=line.strip().split("\t")
-        print(field[arg-1])
-        
-    if len(sys.argv[1])>3:    
-     for line in f:
-      field=line.strip().split("\t")
-      i=2
-      while i+1<=len(sys.argv[1]):
-          arg=int(sys.argv[1][i])
-          print(field[arg-1],end="\t")
-          i=i+2
-      print()
+delimiter = "\t"
 
-    
-elif len(sys.argv)==4:
-    with open(sys.argv[3],"r") as f:
-     
-     arg=int(sys.argv[1][2])
-     delimiter= sys.argv[2][2]
-     for line in f:
-        field=line.strip().split(delimiter)
-        print(field[arg-1])
-     
+if sys.argv[1].startswith("-d"):
+    delimiter = sys.argv[1][2]
+    field_arg = sys.argv[2]
+else:
+    field_arg = sys.argv[1]
 
+fields_required = field_arg[2:].split()
 
+try:
+    for line in f:
+        field = line.strip().split(delimiter)
 
-   
+        for i in range(len(fields_required)):
+            print(field[int(fields_required[i]) - 1], end="")
+            if i != len(fields_required) - 1:
+                print(delimiter, end="")
+        print()
 
-    
-    
-
-                                 
+finally:
+    if f is not sys.stdin:
+        f.close()
